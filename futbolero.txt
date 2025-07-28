@@ -1,0 +1,103 @@
+#include <SoftwareSerial.h>
+
+// Crea un puerto serial virtual en los pines 11 (RX) y 10 (TX)
+SoftwareSerial Bluetooth(10, 11); // RX, TX
+
+char comando; // Variable para almacenar el comando recibido
+
+
+// Variables para el motor 1 
+const int motor1pin1=5;
+const int motor1pin2=4;
+const int motor1PWM=6;
+
+// Variables para el motor 1
+const int motor2pin1=8;
+const int motor2pin2=7;
+const int motor2PWM=9;  
+
+
+void setup()
+{
+  //Se declaran pines de salida motor 1
+	pinMode(motor1pin1, OUTPUT);
+	pinMode(motor1pin2, OUTPUT);
+	pinMode(motor1PWM, OUTPUT);
+  
+  //Se declaran pines de salida motor 2
+  pinMode(motor2pin1, OUTPUT);
+  pinMode(motor2pin2, OUTPUT);
+  pinMode(motor2PWM, OUTPUT);
+
+	Serial.begin(9600);         // Serial normal (USB - PC)
+	Bluetooth.begin(9600);       // Serial Bluetooth (HC-05)
+}
+  
+void loop()
+{ 
+	// Si hay datos recibidos por Bluetooth
+	if (Bluetooth.available() > 0)
+	{
+		comando = Bluetooth.read(); // Leer el comando
+
+		switch (comando)
+		{
+			case 'F':
+				avanzar();
+         Serial.println("FUNCION AVANZAR");
+				break;
+			case 'B':
+				retroceder();
+        Serial.println("FUNCION RETROCEDER");
+				break;
+			case 'L':
+				girarizquierda();
+        Serial.println("FUNCION IZQUIERDA");
+				break;
+			case 'R':
+				girarderecha();
+        Serial.println("FUNCION DERECHA");
+				break;
+			case 'S':
+				detener();
+        Serial.println("FUNCION DETENER");
+				break;
+		}
+	}
+}
+
+// Funciones de movimiento
+void avanzar() {
+	digitalWrite(motor1pin1, HIGH);
+	digitalWrite(motor2pin1, HIGH);
+	digitalWrite(motor1pin2, LOW);
+	digitalWrite(motor2pin2, LOW);
+}
+
+void retroceder() {
+	digitalWrite(motor1pin1, LOW);
+	digitalWrite(motor2pin1, LOW);
+	digitalWrite(motor1pin2, HIGH);
+	digitalWrite(motor2pin2, HIGH);
+}
+
+void girarizquierda() {
+	digitalWrite(motor1pin1, LOW);
+	digitalWrite(motor2pin1, HIGH);
+	digitalWrite(motor1pin2, HIGH);
+	digitalWrite(motor2pin2, LOW);
+}
+
+void girarderecha() {
+	digitalWrite(motor1pin1, HIGH);
+	digitalWrite(motor2pin1, LOW);
+	digitalWrite(motor1pin2, LOW);
+	digitalWrite(motor2pin2, HIGH);
+}
+
+void detener() {
+	digitalWrite(motor1pin1, LOW);
+	digitalWrite(motor2pin1, LOW);
+	digitalWrite(motor1pin2, LOW);
+	digitalWrite(motor2pin2, LOW);
+}
